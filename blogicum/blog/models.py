@@ -23,16 +23,19 @@ class Post(BaseModel):
     pub_date = models.DateTimeField()
     author = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='posts'
     )
     location = models.ForeignKey(
         Location,
         blank=True,
         null=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+        related_name='posts'
     )
     category = models.ForeignKey(
         Category,
         null=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+        related_name='posts'
     )
