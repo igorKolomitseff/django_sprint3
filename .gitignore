@@ -151,3 +151,6 @@ blogicum/static_dev/css/
 
 # Database fixtures
 db.json
+
+# The directory with the technical task
+templates/
