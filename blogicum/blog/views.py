@@ -1,73 +1,52 @@
-from django.http import Http404
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
+
+from .models import Post, Category
 
 
-posts = [
-    {
-        'id': 0,
-        'location': 'Остров отчаянья',
-        'date': '30 сентября 1659 года',
-        'category': 'travel',
-        'text': '''Наш корабль, застигнутый в открытом море
-                страшным штормом, потерпел крушение.
-                Весь экипаж, кроме меня, утонул; я же,
-                несчастный Робинзон Крузо, был выброшен
-                полумёртвым на берег этого проклятого острова,
-                который назвал островом Отчаяния.''',
-    },
-    {
-        'id': 1,
-        'location': 'Остров отчаянья',
-        'date': '1 октября 1659 года',
-        'category': 'not-my-day',
-        'text': '''Проснувшись поутру, я увидел, что наш корабль сняло
-                с мели приливом и пригнало гораздо ближе к берегу.
-                Это подало мне надежду, что, когда ветер стихнет,
-                мне удастся добраться до корабля и запастись едой и
-                другими необходимыми вещами. Я немного приободрился,
-                хотя печаль о погибших товарищах не покидала меня.
-                Мне всё думалось, что, останься мы на корабле, мы
-                непременно спаслись бы. Теперь из его обломков мы могли бы
-                построить баркас, на котором и выбрались бы из этого
-                гиблого места.''',
-    },
-    {
-        'id': 2,
-        'location': 'Остров отчаянья',
-        'date': '25 октября 1659 года',
-        'category': 'not-my-day',
-        'text': '''Всю ночь и весь день шёл дождь и дул сильный
-                порывистый ветер. 25 октября.  Корабль за ночь разбило
-                в щепки; на том месте, где он стоял, торчат какие-то
-                жалкие обломки,  да и те видны только во время отлива.
-                Весь этот день я хлопотал  около вещей: укрывал и
-                укутывал их, чтобы не испортились от дождя.''',
-    },
-]
-
-
-posts_by_id = {post['id']: post for post in posts}
+POST_LIST = Post.objects.select_related(
+    'author', 'category', 'location'
+).only(
+    'id', 'title', 'text', 'pub_date', 'location',
+    'author__username',
+    'category__title', 'category__slug',
+    'location__name', 'location__is_published'
+).filter(
+    pub_date__lte=timezone.now(),
+    is_published=True,
+)
 
 
 def index(request):
     return render(request, 'blog/index.html', {
-        'posts': posts,
+        'post_list': POST_LIST.filter(
+            category__is_published=True
+        )[:5],
     })
 
 
 def post_detail(request, post_id):
-    if post_id not in posts_by_id.keys():
-        raise Http404(
-            f'The requested page was not found: {request.path}. '
-            f'Invalid value of the path variable: post_id = {post_id}. '
-            'A post with the specified key does not exist.'
-        )
     return render(request, 'blog/detail.html', {
-        'post': posts_by_id[post_id],
+        'post': get_object_or_404(
+            POST_LIST.filter(
+                category__is_published=True
+            ),
+            pk=post_id
+        ),
     })
 
 
 def category_posts(request, category_slug):
     return render(request, 'blog/category.html', {
-        'category_slug': category_slug,
+        'category': get_object_or_404(
+            Category.objects.values(
+                'title', 'description'
+            ).filter(
+                is_published=True
+            ),
+            slug=category_slug,
+        ),
+        'post_list': POST_LIST.filter(
+            category__slug=category_slug,
+        ),
     })
