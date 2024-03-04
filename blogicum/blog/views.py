@@ -13,7 +13,7 @@ POST_LIST = Post.objects.select_related(
     'location__name', 'location__is_published'
 ).filter(
     pub_date__lte=timezone.now(),
-    is_published=True,
+    is_published=True
 )
 
 
@@ -47,6 +47,6 @@ def category_posts(request, category_slug):
             slug=category_slug,
         ),
         'post_list': POST_LIST.filter(
-            category__slug=category_slug,
+            category__slug=category_slug
         ),
     })
