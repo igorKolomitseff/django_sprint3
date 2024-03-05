@@ -21,20 +21,6 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
-    def __str__(self):
-        field_values = []
-        for field in self._meta.get_fields():
-            if hasattr(field, 'verbose_name'):
-                value = getattr(self, field.name, '')
-                if isinstance(value, str):
-                    value = value[:50]
-                elif isinstance(value, datetime):
-                    value = value.strftime('%m-%d-%Y, %H:%M:%S')
-                field_values.append(
-                    f'{field.verbose_name}: {value}'
-                )
-        return ' | '.join(field_values)
-
 
 class Category(BaseModel):
     title = models.CharField(max_length=256, verbose_name='Заголовок')
@@ -53,6 +39,9 @@ class Category(BaseModel):
         verbose_name = 'категория'
         verbose_name_plural = 'Категории'
 
+    def __str__(self):
+        return f'{self.title:.50}. {self.description:.50} ...'
+
 
 class Location(BaseModel):
     name = models.CharField(max_length=256, verbose_name='Название места')
@@ -60,6 +49,9 @@ class Location(BaseModel):
     class Meta:
         verbose_name = 'местоположение'
         verbose_name_plural = 'Местоположения'
+
+    def __str__(self):
+        return f'{self.name:.50}'
 
 
 class Post(BaseModel):
@@ -96,3 +88,11 @@ class Post(BaseModel):
         verbose_name_plural = 'Публикации'
         default_related_name = 'posts'
         ordering = ('-pub_date',)
+
+    def __str__(self):
+        return (
+            f'{self.title:.50}. {self.text:.50} ... | '
+            f'{self.author} | {self.location} | '
+            f'{self.pub_date.strftime("%d.%m.%Y %H:%M")} | '
+            f'В категории "{self.category}"'
+        )
