@@ -4,49 +4,38 @@ from django.utils import timezone
 from .models import Post, Category
 
 
-POST_LIST = Post.objects.select_related(
-    'author', 'category', 'location'
-).only(
-    'id', 'title', 'text', 'pub_date', 'location',
-    'author__username',
-    'category__title', 'category__slug',
-    'location__name', 'location__is_published'
-).filter(
-    pub_date__lte=timezone.now(),
-    is_published=True
-)
+def post_filter(post_object=Post.objects):
+    return post_object.select_related(
+        'author', 'category', 'location'
+    ).filter(
+        pub_date__lte=timezone.now(),
+        is_published=True,
+        category__is_published=True
+    )
 
 
 def index(request):
     return render(request, 'blog/index.html', {
-        'post_list': POST_LIST.filter(
-            category__is_published=True
-        )[:5],
+        'post_list': post_filter()[:5],
     })
 
 
 def post_detail(request, post_id):
     return render(request, 'blog/detail.html', {
         'post': get_object_or_404(
-            POST_LIST.filter(
-                category__is_published=True
-            ),
+            post_filter(),
             pk=post_id
         ),
     })
 
 
 def category_posts(request, category_slug):
+    category = get_object_or_404(
+        Category.objects,
+        slug=category_slug,
+        is_published=True
+    )
     return render(request, 'blog/category.html', {
-        'category': get_object_or_404(
-            Category.objects.values(
-                'title', 'description'
-            ).filter(
-                is_published=True
-            ),
-            slug=category_slug,
-        ),
-        'post_list': POST_LIST.filter(
-            category__slug=category_slug
-        ),
+        'category': category,
+        'post_list': post_filter(category.posts),
     })
