@@ -27,7 +27,7 @@ class BaseModel(models.Model):
             if hasattr(field, 'verbose_name'):
                 value = getattr(self, field.name, '')
                 if isinstance(value, str):
-                    value = f'{value:.50}'
+                    value = value[:50]
                 elif isinstance(value, datetime):
                     value = value.strftime('%m-%d-%Y, %H:%M:%S')
                 field_values.append(
