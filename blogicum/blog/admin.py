@@ -30,13 +30,18 @@ class PostAdmin(admin.ModelAdmin):
         'title',
         'is_published',
         'author',
-        'category',
+        'display_category',
         'pub_date'
     )
+    list_select_related = ('author', 'category', 'location')
     list_editable = ('is_published',)
     search_fields = ('title',)
-    list_filter = ('category',)
+    list_filter = ('category__title',)
     list_display_links = ('title',)
+
+    @admin.display(ordering='category__title', description='Категория')
+    def display_category(self, obj):
+        return obj.category.title
 
 
 admin.site.register(Category, CategoryAdmin)
