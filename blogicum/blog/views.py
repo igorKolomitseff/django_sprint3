@@ -4,8 +4,8 @@ from django.utils import timezone
 from .models import Post, Category
 
 
-def post_filter(post_object=Post.objects):
-    return post_object.select_related(
+def post_filter(post_objects=Post.objects):
+    return post_objects.select_related(
         'author', 'category', 'location'
     ).filter(
         pub_date__lte=timezone.now(),
