@@ -5,7 +5,7 @@ from django.db import models
 User = get_user_model()
 
 
-class BaseModel(models.Model):
+class PublishedModel(models.Model):
     is_published = models.BooleanField(
         default=True,
         verbose_name='Опубликовано',
@@ -20,7 +20,7 @@ class BaseModel(models.Model):
         abstract = True
 
 
-class Category(BaseModel):
+class Category(PublishedModel):
     title = models.CharField(max_length=256, verbose_name='Заголовок')
     description = models.TextField(verbose_name='Описание')
     slug = models.SlugField(
@@ -42,7 +42,7 @@ class Category(BaseModel):
         return f'"{self.title:.50}": {self.description:.50} ...'
 
 
-class Location(BaseModel):
+class Location(PublishedModel):
     name = models.CharField(max_length=256, verbose_name='Название места')
 
     class Meta:
@@ -54,7 +54,7 @@ class Location(BaseModel):
         return f'{self.name:.50}'
 
 
-class Post(BaseModel):
+class Post(PublishedModel):
     title = models.CharField(max_length=256, verbose_name='Заголовок')
     text = models.TextField(verbose_name='Текст')
     pub_date = models.DateTimeField(
