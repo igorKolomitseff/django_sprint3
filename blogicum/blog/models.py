@@ -90,7 +90,7 @@ class Post(BaseModel):
     def __str__(self):
         return (
             f'"{self.title:.50}". {self.text:.50} ... | '
-            f'{self.author} | {self.location} | '
             f'{self.pub_date.strftime("%d.%m.%Y %H:%M")} | '
-            f'В категории {self.category}'
+            f'{self.location} | От автора {self.author} '
+            f'в категории {self.category}'
         )
