@@ -38,7 +38,7 @@ class Category(BaseModel):
         verbose_name_plural = 'Категории'
 
     def __str__(self):
-        return f'{self.title:.50}. {self.description:.50} ...'
+        return f'"{self.title:.50}": {self.description:.50} ...'
 
 
 class Location(BaseModel):
@@ -89,8 +89,8 @@ class Post(BaseModel):
 
     def __str__(self):
         return (
-            f'{self.title:.50}. {self.text:.50} ... | '
+            f'"{self.title:.50}". {self.text:.50} ... | '
             f'{self.author} | {self.location} | '
             f'{self.pub_date.strftime("%d.%m.%Y %H:%M")} | '
-            f'В категории "{self.category}"'
+            f'В категории {self.category}'
         )
