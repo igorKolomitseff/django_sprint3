@@ -16,7 +16,7 @@
 ## Стек технологий
 * [Python](https://www.python.org/)
 * [Django](https://www.djangoproject.com/)
-* [SQlite](https://www.sqlite.org/)
+* [SQLite](https://www.sqlite.org/)
 * [HTML](https://developer.mozilla.org/ru/docs/Web/HTML)
 * [CSS](https://developer.mozilla.org/ru/docs/Web/CSS)
 * [Bootstrap](https://getbootstrap.com/)
